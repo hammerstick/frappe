@@ -266,8 +266,7 @@ def import_doc(context, path, force=False):
 	if not os.path.exists(path):
 		path = os.path.join('..', path)
 	if not os.path.exists(path):
-		print('Invalid path {0}'.format(path))
-		sys.exit(1)
+		raise Exception('Invalid path {0}'.format(path))
 
 	for site in context.sites:
 		try:
@@ -296,8 +295,7 @@ def import_csv(context, path, only_insert=False, submit_after_import=False, igno
 	if not os.path.exists(path):
 		path = os.path.join('..', path)
 	if not os.path.exists(path):
-		print('Invalid path {0}'.format(path))
-		sys.exit(1)
+		raise Exception('Invalid path {0}'.format(path))
 
 	with open(path, 'r') as csvfile:
 		content = read_csv_content(csvfile.read())

@@ -57,8 +57,7 @@ def _new_site(db_name, site, mariadb_root_username=None, mariadb_root_password=N
 	"""Install a new Frappe site"""
 
 	if not force and os.path.exists(site):
-		print('Site {0} already exists'.format(site))
-		sys.exit(1)
+		raise Exception('Site {0} already exists'.format(site))
 
 	if no_mariadb_socket and not db_type == "mariadb":
 		print('--no-mariadb-socket requires db_type to be set to mariadb.')
@@ -98,7 +97,6 @@ def _new_site(db_name, site, mariadb_root_username=None, mariadb_root_password=N
 	scheduler_status = "disabled" if frappe.utils.scheduler.is_scheduler_disabled() else "enabled"
 	print("*** Scheduler is", scheduler_status, "***")
 
-
 @click.command('restore')
 @click.argument('sql-file-path')
 @click.option('--mariadb-root-username', default='root', help='Root username for MariaDB')
@@ -120,8 +118,7 @@ def restore(context, sql_file_path, mariadb_root_username=None, mariadb_root_pas
 		base_path = '..'
 		sql_file_path = os.path.join(base_path, sql_file_path)
 		if not os.path.exists(sql_file_path):
-			print('Invalid path {0}'.format(sql_file_path[3:]))
-			sys.exit(1)
+			raise Exception('Invalid path {0}'.format(sql_file_path[3:]))
 	elif sql_file_path.startswith(os.sep):
 		base_path = os.sep
 	else:
@@ -377,7 +374,7 @@ def use(site, sites_path='.'):
 		with open(os.path.join(sites_path,  "currentsite.txt"), "w") as sitefile:
 			sitefile.write(site)
 	else:
-		print("Site {} does not exist".format(site))
+		raise Exception("Site {} does not exist".format(site))
 
 @click.command('backup')
 @click.option('--with-files', default=False, is_flag=True, help="Take backup with files")
