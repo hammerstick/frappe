@@ -40,8 +40,7 @@ def _new_site(db_name, site, mariadb_root_username=None, mariadb_root_password=N
 	"""Install a new Frappe site"""
 
 	if not force and os.path.exists(site):
-		print('Site {0} already exists'.format(site))
-		sys.exit(1)
+		raise Exception('Site {0} already exists'.format(site))
 
 	if not db_name:
 		db_name = '_' + hashlib.sha1(site.encode()).hexdigest()[:16]
@@ -105,8 +104,7 @@ def restore(context, sql_file_path, mariadb_root_username=None, mariadb_root_pas
 	if not os.path.exists(sql_file_path):
 		sql_file_path = '../' + sql_file_path
 		if not os.path.exists(sql_file_path):
-			print('Invalid path {0}'.format(sql_file_path[3:]))
-			sys.exit(1)
+			raise Exception('Invalid path {0}'.format(sql_file_path[3:]))
 
 	if sql_file_path.endswith('sql.gz'):
 		sql_file_path = extract_sql_gzip(os.path.abspath(sql_file_path))
@@ -117,7 +115,6 @@ def restore(context, sql_file_path, mariadb_root_username=None, mariadb_root_pas
 		mariadb_root_password=mariadb_root_password, admin_password=admin_password,
 		verbose=context.verbose, install_apps=install_app, source_sql=sql_file_path,
 		force=context.force)
-
 	# Extract public and/or private files to the restored site, if user has given the path
 	if with_public_files:
 		public = extract_tar_files(site, with_public_files, 'public')
@@ -299,7 +296,7 @@ def use(site, sites_path='.'):
 		with open(os.path.join(sites_path,  "currentsite.txt"), "w") as sitefile:
 			sitefile.write(site)
 	else:
-		print("{} does not exist".format(site))
+		raise Exception("{} does not exist".format(site))
 
 @click.command('backup')
 @click.option('--with-files', default=False, is_flag=True, help="Take backup with files")
